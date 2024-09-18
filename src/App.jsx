@@ -19,7 +19,7 @@ function App() {
       const response = await axios.get(API_URL);
       setCategories(response.data);
     } catch (error) {
-      toast.error('Error fetching categories');
+      toast.error('Error al tener las categorias');
     }
   };
 
@@ -28,9 +28,9 @@ function App() {
       const response = await axios.post(API_URL, newCategory);
       setCategories([...categories, response.data]);
       setNewCategory({ name: '', image: '' });
-      toast.success('Category added successfully');
+      toast.success('Categoria agregada con exito');
     } catch (error) {
-      toast.error('Error adding category');
+      toast.error('Error al agregar categoria');
     }
   };
 
@@ -39,30 +39,30 @@ function App() {
       const response = await axios.put(`${API_URL}/${editingCategory.id}`, editingCategory);
       setCategories(categories.map(cat => (cat.id === editingCategory.id ? response.data : cat)));
       setEditingCategory(null);
-      toast.success('Category updated successfully');
+      toast.success('Categoria actualizada');
     } catch (error) {
-      toast.error('Error updating category');
+      toast.error('Error al actualizar');
     }
   };
 
   const handleDeleteCategory = async (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    if (window.confirm('quiere borrar la categoria??')) {
       try {
         await axios.delete(`${API_URL}/${id}`);
         setCategories(categories.filter(cat => cat.id !== id));
-        toast.success('Category deleted successfully');
+        toast.success('se borro con exito');
       } catch (error) {
-        toast.error('Error deleting category');
+        toast.error('no se pudo borrar');
       }
     }
   };
 
   return (
     <div className="container mt-4">
-      <h1>Categories CRUD</h1>
+      <h1>Categorias CRUD Examen2 React</h1>
 
       <div className="mb-4">
-        <h2>Add/Edit Category</h2>
+        <h2>Agregar, editar, borrar.</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -70,7 +70,7 @@ function App() {
           }}
         >
           <div className="mb-3">
-            <label className="form-label">Name</label>
+            <label className="form-label">Nombre</label>
             <input
               type="text"
               className="form-control"
@@ -86,7 +86,7 @@ function App() {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Image URL</label>
+            <label className="form-label">URL de la imagen</label>
             <input
               type="text"
               className="form-control"
@@ -102,12 +102,12 @@ function App() {
             />
           </div>
           <button type="submit" className="btn btn-primary">
-            {editingCategory ? 'Update Category' : 'Add Category'}
+            {editingCategory ? 'Update Category' : 'agregar nueva categoria'}
           </button>
         </form>
       </div>
 
-      <h2>Categories List</h2>
+      <h2>Lista de Categorias</h2>
       <ul className="list-group">
         {categories.map((category) => (
           <li key={category.id} className="list-group-item">
@@ -121,13 +121,13 @@ function App() {
                   className="btn btn-secondary me-2"
                   onClick={() => setEditingCategory(category)}
                 >
-                  Edit
+                  Editar
                 </button>
                 <button
                   className="btn btn-danger"
                   onClick={() => handleDeleteCategory(category.id)}
                 >
-                  Delete
+                  borrar
                 </button>
               </div>
             </div>
