@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+
 
 const API_URL = 'https://api.escuelajs.co/api/v1/categories';
 
