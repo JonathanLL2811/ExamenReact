@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button } from 'react-bootstrap'; // Importa Modal y Button de react-bootstrap
+import { Modal, Button } from 'react-bootstrap';
 import './App.css';
-
-
 const API_URL = 'https://api.escuelajs.co/api/v1/categories';
 
 function App() {
@@ -23,7 +21,7 @@ function App() {
       const response = await axios.get(API_URL);
       setCategories(response.data);
     } catch (error) {
-      toast.error('Error al obtener las categorias');
+      toast.error('Error al obtener las categorías');
     }
   };
 
@@ -31,7 +29,7 @@ function App() {
     try {
       const response = await axios.post(API_URL, newCategory);
       setCategories([...categories, response.data]);
-      setShowModal(false);
+      setNewCategory({ name: '', image: '' });
       toast.success('Categoría agregada con éxito');
     } catch (error) {
       toast.error('Error al agregar categoría');
@@ -44,9 +42,9 @@ function App() {
       setCategories(categories.map(cat => (cat.id === editingCategory.id ? response.data : cat)));
       setEditingCategory(null);
       setShowModal(false);
-      toast.success('Categoría actualizada');
+      toast.success('Categoría actualizada con éxito');
     } catch (error) {
-      toast.error('Error al actualizar');
+      toast.error('Error al actualizar categoría');
     }
   };
 
@@ -57,26 +55,50 @@ function App() {
         setCategories(categories.filter(cat => cat.id !== id));
         toast.success('Categoría eliminada con éxito');
       } catch (error) {
-        toast.error('No se pudo borrar');
+        toast.error('Error al eliminar categoría');
       }
     }
-  };
-
-  const handleShowModal = (category = null) => {
-    setEditingCategory(category);
-    setNewCategory(category || { name: '', image: '' });
-    setShowModal(true);
   };
 
   return (
     <div className="container mt-4">
       <h1>Categorías CRUD Examen2 React</h1>
 
-      <Button variant="primary" onClick={() => handleShowModal()}>
-        Agregar Nueva Categoría
-      </Button>
+      <div className="mb-4">
+        <h2>Agregar Categoría</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddCategory();
+          }}
+        >
+          <div className="mb-3">
+            <label className="form-label">Nombre</label>
+            <input
+              type="text"
+              className="form-control"
+              value={newCategory.name}
+              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">URL de la Imagen</label>
+            <input
+              type="text"
+              className="form-control"
+              value={newCategory.image}
+              onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Agregar Categoría
+          </button>
+        </form>
+      </div>
 
-      <h2 className="mt-4">Lista de Categorías</h2>
+      <h2>Lista de Categorías</h2>
       <ul className="list-group">
         {categories.map((category) => (
           <li key={category.id} className="list-group-item">
@@ -86,61 +108,65 @@ function App() {
                 <img src={category.image} alt={category.name} style={{ width: '100px' }} />
               </div>
               <div>
-                <Button
-                  variant="secondary"
-                  className="me-2"
-                  onClick={() => handleShowModal(category)}
+                <button
+                  className="btn btn-secondary me-2"
+                  onClick={() => {
+                    setEditingCategory(category);
+                    setShowModal(true);
+                  }}
                 >
                   Editar
-                </Button>
-                <Button
-                  variant="danger"
+                </button>
+                <button
+                  className="btn btn-danger"
                   onClick={() => handleDeleteCategory(category.id)}
                 >
                   Borrar
-                </Button>
+                </button>
               </div>
             </div>
           </li>
         ))}
       </ul>
 
-      {/* Modal para agregar/editar categoría */}
+      {/* rpobando Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingCategory ? 'Editar Categoría' : 'Agregar Categoría'}</Modal.Title>
+          <Modal.Title>Editar Categoría</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              editingCategory ? handleEditCategory() : handleAddCategory();
-            }}
-          >
-            <div className="mb-3">
-              <label className="form-label">Nombre</label>
-              <input
-                type="text"
-                className="form-control"
-                value={newCategory.name}
-                onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">URL de la imagen</label>
-              <input
-                type="text"
-                className="form-control"
-                value={newCategory.image}
-                onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
-                required
-              />
-            </div>
-            <Button type="submit" variant="primary">
-              {editingCategory ? 'Actualizar Categoría' : 'Agregar Categoría'}
-            </Button>
-          </form>
+          {editingCategory && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleEditCategory();
+              }}
+            >
+              <div className="mb-3">
+                <label className="form-label">Nombre</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editingCategory.name}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">URL de la Imagen</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editingCategory.image}
+                  onChange={(e) => setEditingCategory({ ...editingCategory, image: e.target.value })}
+                  required
+                />
+              </div>
+              <Button type="submit" className="btn btn-primary">
+                Actualizar Categoría
+              </Button>
+            </form>
+          )}
         </Modal.Body>
       </Modal>
 
